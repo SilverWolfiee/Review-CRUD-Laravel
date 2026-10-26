@@ -7,9 +7,12 @@ node -v
 npm -v
 ```
 ## Setup:  
-1. Run `composer create-project laravel/laravel <project-name>` buat bikin project laravel ny
+1. Run `composer create-project laravel/laravel <project-name>` 
+    buat bikin project laravel ny
     * Note: Laravel punya BINUS itu v11 tpi klo dicoba create-project pake v11 g bs/g dikasih kykny grgr 2 vulnerability CVE 9 yg kmrn :p  
     Tpi shrsny pake v13 g mslh; semua function ny msh bsbs aj.
+    
+
 
 2. Buat contoh ini w pake project-name = laravel-CRUD. cd ke project dir ny (`cd laravel-CRUD`)
 
@@ -23,7 +26,19 @@ npm -v
 
 6. Run `php artisan serve` buat make sure the app works. Welcome page ny may or may not look a lil fucked up but that's fine we're not gonna use that shi anyway yg penting g ad error dlu. Kebetulan Laravel skrg itu an "agent first" web framework whatever the hell that means basically laravel skrg di optimize utk vibe coding with maximum efficiency jd klo ad error di kanan atas ad 'Copy as Markdown'. Copy itu aj trus kasih ke codex jgn tny w w hantem lu
 
-> Note: Project ini pake DB ny sqlite doank soalny w g mau download fuckass xampp ygy. W td nyoba setting .env buat point the DB xampp itu g susah ko tinggal ini itu done slsai ez kn
+
+Alternatively, do `git clone https://git.tensorcode.co.id/SilverWolf/template-laravel.git`
+buat dapat template laravel yang di kasih binus.
+then just do : 
+`npm install && npm install axios`
+`php artisan serve`
+
+## Setup Xampp
+1. On windows, just open xampp app, and point it to your .env
+2. on linux, do `sudo /opt/lampp/manager-linux-x64.run`
+3. Create new database in phpmyadmin with the same name as the one in .env
+
+> If Laravel shows `MissingAppKeyException` or “No application encryption key has been specified,” generate an application key with `php artisan key:generate` from the project directory.
 
 ## Basic CRUD Web App | Tasks Manager
 1. First thing to do when making a CRUD (noun) app is making a DB Model for the app to CRUD (verb).  
@@ -278,70 +293,96 @@ Route::patch('edit/markAsComplete/{task}', [TaskController::class, 'markAsComple
 Skrg mulai bikin view ny/web page ny. Kt kn pake bootstrap tp w g tau pasti botstrap lu org version brp jd check pake `npm list bootstrap` trus buka documentation bootstrap buat version yg bener. Versi bootstrap w itu `bootstrap@5.3.8` jd w pake v5.3  
 > I ain't writing the HTML in here so be a good boy/girl and look inside `resources/views` yourself
 
----
----
----
----
----
----
----
----
 
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## Factories and Seeders (Faker)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A **factory** describes how to create fake model attributes. Laravel uses **Faker** to generate realistic sample values. A **seeder** runs factories (or other database setup code) to insert records into the database.
 
-## About Laravel
+### Create them for an existing model
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+The `--factory` and `--seed` flags on `make:model` are convenient when creating a new model. If the model already exists, generate the files separately. For the `Task` model:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```sh
+php artisan make:factory TaskFactory --model=Task
+php artisan make:seeder TaskSeeder
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Laravel includes Faker in a standard project as a development dependency, so it is usually ready to use. If your project does not have it, install it with `composer require fakerphp/faker --dev`.
 
-## Contributing
+### Define fake task data
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Edit `database/factories/TaskFactory.php`. Return an array whose keys match the columns in the `tasks` table:
 
-## Code of Conduct
+```php
+public function definition(): array
+{
+    return [
+        'title' => fake()->sentence(),
+        'description' => fake()->paragraph(),
+        'completed' => fake()->boolean(),
+    ];
+}
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+The model must call `HasFactory` trait for `Task::factory()` to work. The `Task` model created with Laravel's factory flag normally already has it:
 
-## Security Vulnerabilities
+```php
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+class Task extends Model
+{
+    use HasFactory;
+}
+```
 
-## License
+### Use the factory in a seeder
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Edit `database/seeders/TaskSeeder.php` and import the model with its `App\Models` namespace:
+
+```php
+use App\Models\Task;
+use Illuminate\Database\Seeder;
+
+class TaskSeeder extends Seeder
+{
+    public function run(): void
+    {
+        Task::factory()->count(10)->create();
+    }
+}
+```
+
+This creates and saves 10 tasks. Check that the factory attributes match your migration and that any required fields have values.
+
+### Run the seeder
+
+To run only the task seeder:
+
+```sh
+php artisan db:seed --class=TaskSeeder
+```
+
+To run it along with the application's other seeders, add it to `database/seeders/DatabaseSeeder.php`:
+
+```php
+public function run(): void
+{
+    $this->call(TaskSeeder::class);
+}
+```
+
+Then run:
+
+```sh
+php artisan db:seed
+```
+
+`db:seed` runs `DatabaseSeeder`. If that file creates a fixed user such as `test@example.com`, running it again can fail because the email is already in the database. Either run `TaskSeeder` directly or make that user creation repeatable with `User::firstOrCreate(...)`.
+
+For a development database, you can recreate all tables and seed them in one command:
+
+```sh
+php artisan migrate:fresh --seed
+```
+
+**Warning:** `migrate:fresh` drops all tables and their data before recreating them. Do not use it on a database whose data you need to keep.
